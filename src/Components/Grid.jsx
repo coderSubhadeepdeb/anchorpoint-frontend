@@ -1,104 +1,129 @@
-"use client";;
-import React, { useState } from "react";
-import { motion } from "motion/react";
-import {cn} from "../utils"
+// components/TechnicalGridBackground.jsx
+import React from 'react';
 
-export const LayoutGrid = ({
-  cards
-}) => {
-  const [selected, setSelected] = useState(null);
-  const [lastSelected, setLastSelected] = useState(null);
+const TechnicalGridBackground = () => {
+  // Configuration matching your image
+  const GRID_SIZE = 20; // Main grid spacing (matches your coordinate system)
+  const SUBDIVISIONS = 4; // Subdivisions between main grid lines
+  const STROKE_WIDTH = 0.5;
+  const TEXT_SIZE = 3;
+  const COLOR = "#3B82F6"; // Blue similar to your image
 
-  const handleClick = (card) => {
-    setLastSelected(selected);
-    setSelected(card);
-  };
+  // Generate all grid elements
+  const gridElements = [];
+  
+  // Main grid lines (every 20 units)
+  for (let x = 0; x <= 100; x += GRID_SIZE) {
+    gridElements.push(
+      <line
+        key={`v-${x}`}
+        x1={x}
+        y1="0"
+        x2={x}
+        y2="100"
+        stroke={COLOR}
+        strokeWidth={STROKE_WIDTH}
+      />
+    );
+    
+    // X-axis labels
+    if (x > 0) {
+      gridElements.push(
+        <text
+          key={`xlabel-${x}`}
+          x={x}
+          y="98"
+          fill={COLOR}
+          fontSize={TEXT_SIZE}
+          textAnchor="middle"
+        >
+          {x}
+        </text>
+      );
+    }
+  }
 
-  const handleOutsideClick = () => {
-    setLastSelected(selected);
-    setSelected(null);
-  };
+  for (let y = 0; y <= 100; y += GRID_SIZE) {
+    gridElements.push(
+      <line
+        key={`h-${y}`}
+        x1="0"
+        y1={y}
+        x2="100"
+        y2={y}
+        stroke={COLOR}
+        strokeWidth={STROKE_WIDTH}
+      />
+    );
+    
+    // Y-axis labels
+    if (y > 0) {
+      gridElements.push(
+        <text
+          key={`ylabel-${y}`}
+          x="2"
+          y={100 - y + TEXT_SIZE/2}
+          fill={COLOR}
+          fontSize={TEXT_SIZE}
+        >
+          {y}
+        </text>
+      );
+    }
+  }
+
+  // Subdivision lines (every 5 units)
+  for (let x = 0; x <= 100; x += GRID_SIZE/SUBDIVISIONS) {
+    if (x % GRID_SIZE !== 0) { // Skip main grid lines
+      gridElements.push(
+        <line
+          key={`subv-${x}`}
+          x1={x}
+          y1="0"
+          x2={x}
+          y2="100"
+          stroke={COLOR}
+          strokeWidth={STROKE_WIDTH * 0.7}
+          strokeDasharray="1,1"
+        />
+      );
+    }
+  }
+
+  for (let y = 0; y <= 100; y += GRID_SIZE/SUBDIVISIONS) {
+    if (y % GRID_SIZE !== 0) {
+      gridElements.push(
+        <line
+          key={`subh-${y}`}
+          x1="0"
+          y1={y}
+          x2="100"
+          y2={y}
+          stroke={COLOR}
+          strokeWidth={STROKE_WIDTH * 0.7}
+          strokeDasharray="1,1"
+        />
+      );
+    }
+  }
 
   return (
-    <div
-      className="w-full h-full p-10 grid grid-cols-1 md:grid-cols-3  max-w-7xl mx-auto gap-4 relative">
-      {cards.map((card, i) => (
-        <div key={i} className={cn(card.className, "")}>
-          <motion.div
-            onClick={() => handleClick(card)}
-            className={cn(card.className, "relative overflow-hidden", selected?.id === card.id
-              ? "rounded-lg cursor-pointer absolute inset-0 h-1/2 w-full md:w-1/2 m-auto z-50 flex justify-center items-center flex-wrap flex-col"
-              : lastSelected?.id === card.id
-              ? "z-40 bg-white rounded-xl h-full w-full"
-              : "bg-white rounded-xl h-full w-full")}
-            layoutId={`card-${card.id}`}>
-            {selected?.id === card.id && <SelectedCard selected={selected} />}
-            <ImageComponent card={card} />
-          </motion.div>
-        </div>
-      ))}
-      <motion.div
-        onClick={handleOutsideClick}
-        className={cn(
-          "absolute h-full w-full left-0 top-0 bg-black opacity-0 z-10",
-          selected?.id ? "pointer-events-auto" : "pointer-events-none"
-        )}
-        animate={{ opacity: selected?.id ? 0.3 : 0 }} />
+    <div className="fixed inset-0 -z-10 overflow-hidden opacity-20">
+      <svg
+        width="100%"
+        height="100%"
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {gridElements}
+        
+        {/* Axes with slightly heavier lines */}
+        <line x1="0" y1="100" x2="100" y2="100" stroke={COLOR} strokeWidth={STROKE_WIDTH * 1.5} />
+        <line x1="0" y1="0" x2="0" y2="100" stroke={COLOR} strokeWidth={STROKE_WIDTH * 1.5} />
+      </svg>
     </div>
   );
 };
 
-const ImageComponent = ({
-  card
-}) => {
-  return (
-    <motion.img
-      layoutId={`image-${card.id}-image`}
-      src={card.Image}
-      height="500"
-      width="500"
-      className={cn(
-        "object-cover object-top absolute inset-0 h-full w-full transition duration-200"
-      )}
-      alt="thumbnail" />
-  );
-};
-
-const SelectedCard = ({
-  selected
-}) => {
-  return (
-    <div
-      className="bg-transparent h-full w-full flex flex-col justify-end rounded-lg shadow-2xl relative z-[60]">
-      <motion.div
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 0.6,
-        }}
-        className="absolute inset-0 h-full w-full bg-black opacity-60 z-10" />
-      <motion.div
-        layoutId={`content-${selected?.id}`}
-        initial={{
-          opacity: 0,
-          y: 100,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        exit={{
-          opacity: 0,
-          y: 100,
-        }}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut",
-        }}
-        className="relative px-8 pb-4 z-[70]">
-        {selected?.content}
-      </motion.div>
-    </div>
-  );
-};
+export default TechnicalGridBackground;

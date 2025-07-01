@@ -16,19 +16,19 @@ const Carousel = () => {
     },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0); // Starts at the first slide
-  const [isTransitioning, setIsTransitioning] = useState(false); // Prevent fast consecutive clicks
+  const [currentIndex, setCurrentIndex] = useState(0); 
+  const [isTransitioning, setIsTransitioning] = useState(false); 
 
-  // Function to go to the next slide
+  
   const next = () => {
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length); // Use modulus for infinite looping
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length); 
       setIsTransitioning(false);
-    }, 700); // This matches the duration of the fade transition
+    }, 700); 
   };
 
-  // Function to go to the previous slide
+ 
   const previous = () => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -37,17 +37,16 @@ const Carousel = () => {
     }, 700);
   };
 
-  // Autoplay
   useEffect(() => {
     const interval = setInterval(() => {
       next();
-    }, 5000); // Change slide every 5 seconds
+    }, 5000); 
     return () => clearInterval(interval);
   }, [currentIndex]);
 
   return (
     <div className="relative w-100% mx-auto  overflow-hidden pt-16">
-      {/* Previous Button */}
+    
       <button
         onClick={previous}
         className="absolute left-5 top-1/2 z-20 flex h-10 w-10 items-center justify-center -translate-y-1/2 rounded-full bg-white/30 backdrop-blur-md text-black hover:bg-white/50 transition"
@@ -58,18 +57,17 @@ const Carousel = () => {
         </svg>
       </button>
 
-      {/* Next Button */}
+      
       <button
         onClick={next}
         className="absolute right-5 top-1/2 z-20 flex h-10 w-10 items-center justify-center -translate-y-1/2 rounded-full bg-white/30 backdrop-blur-md text-black hover:bg-white/50 transition"
       >
-        {/* right arrow */}
+      
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="3" className="size-5 md:size-6 pl-0.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
         </svg>
       </button>
 
-      {/* Slides */}
       <div className="relative min-h-[56svh] max-h-[65svh]  w-full overflow-hidden">
         <div className="absolute w-full h-full transition-opacity ease-in-out duration-700">
           {slides.map((slide, index) => (
@@ -91,7 +89,7 @@ const Carousel = () => {
         </div>
       </div>
 
-      {/* Indicators */}
+  
       <div className="absolute bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 bg-surface/75 px-1.5 py-1 md:px-2 rounded-radius dark:bg-surface-dark/75">
         {slides.map((_, index) => (
           <button

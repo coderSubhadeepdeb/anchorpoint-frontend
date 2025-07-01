@@ -1,12 +1,14 @@
 "use client";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
 import { useState, useRef, useId, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const Slide = ({
     slide,
     index,
     current,
-    handleSlideClick
+    handleSlideClick,
+    totalSlides // Add this prop
 }) => {
     const slideRef = useRef(null);
 
@@ -178,13 +180,17 @@ export function Ongoing({
     const id = useId();
 
     return (
-        <div 
-            className="relative w-full max-w-[90vmin] h-[60vmin] sm:h-[70vmin] mx-auto "
+        <motion.div 
+            className="relative w-full max-w-[90vmin] h-[60vmin] sm:h-[70vmin] mx-auto"
             aria-labelledby={`carousel-heading-${id}`}
             ref={containerRef}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
         >
             <ul
-                className="absolute flex h-full transition-transform duration-1000 ease-in-out "
+                className="absolute flex h-full transition-transform duration-1000 ease-in-out"
                 style={{
                     transform: `translateX(-${current * (100 / slides.length)}%)`,
                 }}>
@@ -194,17 +200,37 @@ export function Ongoing({
                         slide={slide}
                         index={index}
                         current={current}
-                        handleSlideClick={handleSlideClick} />
+                        handleSlideClick={handleSlideClick}
+                        totalSlides={slides.length} // Pass the total slides count
+                    />
                 ))}
             </ul>
-            <div className="absolute flex justify-center w-full top-[calc(100%+1rem)]">
+
+            {/* Navigation controls at the bottom */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center">
                 <CarouselControl
                     type="previous"
                     title="Go to previous slide"
-                    handleClick={handlePreviousClick} />
+                    handleClick={handlePreviousClick}
+                />
 
-                <CarouselControl type="next" title="Go to next slide" handleClick={handleNextClick} />
+                <div className="flex mx-4 gap-2">
+                    {slides.map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handleSlideClick(index)}
+                            className={`w-3 h-3 rounded-full transition-all ${index === current ? 'bg-white w-6' : 'bg-white/50'}`}
+                            aria-label={`Go to slide ${index + 1}`}
+                        />
+                    ))}
+                </div>
+
+                <CarouselControl
+                    type="next"
+                    title="Go to next slide"
+                    handleClick={handleNextClick}
+                />
             </div>
-        </div>
+        </motion.div>
     );
 }

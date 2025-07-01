@@ -1,5 +1,40 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import Img1 from "../Images/Teams.jpg"; // Adjust the path as necessary
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
+
+const fadeInVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut"
+    }
+  }
+};
 
 const TeamPage = () => {
     const teamMembers = [
@@ -34,8 +69,11 @@ const TeamPage = () => {
     ];
 
     return (
+        
         <div className="min-h-screen bg-white relative overflow-hidden">
-            {/* Hero Section */}
+            
+            
+    
             <div
                 className="relative overflow-hidden rounded-lg bg-cover bg-no-repeat py-12 text-center"
                 style={{ backgroundImage: `url('${Img1}')`, height: "400px" }}
@@ -52,7 +90,6 @@ const TeamPage = () => {
                 </div>
             </div>
 
-            {/* Quote Section */}
             <div className="relative max-w-7xl mx-auto px-6 py-24 sm:py-32 lg:px-8 text-center">
                 <div className="relative">
                     <svg className="absolute -top-8 left-1/2 -translate-x-1/2 h-16 w-16 text-gray-200" fill="currentColor" viewBox="0 0 24 24">
@@ -73,16 +110,27 @@ const TeamPage = () => {
                 </div>
             </div>
 
-            {/* Team Section */}
-            <div className="relative max-w-7xl mx-auto px-6 pb-32 lg:px-8">
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 text-center mb-16">
+      
+            <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={containerVariants}
+                className="relative max-w-7xl mx-auto px-6 pb-32 lg:px-8"
+            >
+                <motion.h2 variants={itemVariants} className="text-3xl font-bold tracking-tight text-gray-900 text-center mb-16">
                     MEET OUR TEAM
-                </h2>
+                </motion.h2>
 
-                <div className="grid grid-cols-1 gap-y-16 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
+                <motion.div variants={containerVariants} className="grid grid-cols-1 gap-y-16 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
                     {teamMembers.map((member) => (
-                        <div key={member.name} className="group relative flex flex-col items-center text-center">
-                            {/* Circular Image Container */}
+                        <motion.div 
+                            key={member.name} 
+                            variants={itemVariants}
+                            whileHover={{ y: -5 }}
+                            className="group relative flex flex-col items-center text-center"
+                        >
+                        
                             <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:border-blue-200 transition-all duration-300 mb-6">
                                 <img
                                     src={member.image}
@@ -107,13 +155,19 @@ const TeamPage = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
-            {/* Philosophy Section */}
-            <div className="relative bg-gray-50 py-24 sm:py-32">
+        
+            <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInVariants}
+                className="relative bg-gray-50 py-24 sm:py-32"
+            >
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute left-16 top-full -translate-y-1/2 transform-gpu opacity-50 blur-3xl">
                         <div className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#303030] to-[#f6f6f7]"></div>
@@ -121,10 +175,10 @@ const TeamPage = () => {
                 </div>
                 <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="mx-auto max-w-2xl lg:max-w-none">
-                        <h2 className="text-3xl font-bold tracking-tight text-gray-900 text-center mb-16">
+                        <motion.h2 variants={itemVariants} className="text-3xl font-bold tracking-tight text-gray-900 text-center mb-16">
                             OUR DESIGN PHILOSOPHY
-                        </h2>
-                        <div className="grid grid-cols-1 gap-16 lg:grid-cols-3">
+                        </motion.h2>
+                        <motion.div variants={containerVariants} className="grid grid-cols-1 gap-16 lg:grid-cols-3">
                             {[
                                 {
                                     name: "Contextual Harmony",
@@ -139,7 +193,12 @@ const TeamPage = () => {
                                     description: "Our projects embed ecological responsibility, using renewable materials and energy-positive systems that reduce environmental impact."
                                 }
                             ].map((item) => (
-                                <div key={item.name} className="flex flex-col">
+                                <motion.div 
+                                    key={item.name} 
+                                    variants={itemVariants}
+                                    whileHover={{ scale: 1.03 }}
+                                    className="flex flex-col bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0 h-0.5 w-8 bg-blue-600"></div>
                                         <h3 className="ml-4 text-lg font-medium leading-6 text-gray-900">{item.name}</h3>
@@ -147,12 +206,12 @@ const TeamPage = () => {
                                     <div className="mt-4 flex-grow">
                                         <p className="text-base text-gray-600">{item.description}</p>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))}
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };
