@@ -108,14 +108,14 @@ const ProjectsByCategory = ({ category }) => {
     }
 
     return (
-        <div className="p-4 mb-8">
-            <h3 className="text-xl font-semibold mb-4 capitalize">{category}</h3>
+        <div className=" p-3 rounded-lg mb-3 border-1 border-stone-300">
+            <h3 className="text-lg font-semibold mb-1 capitalize">{category}</h3>
             
             <div className="relative">
                 <div className="overflow-x-auto pb-4">
-                    <div className="flex space-x-4 w-max">
+                    <div className="flex space-x-4 w-max ">
                         {projects.map((project) => (
-                            <div key={project._id} className="w-64 flex-shrink-0">
+                            <div key={project._id} className="w-50 flex-shrink-0">
                                 <ProjectCard 
                                     project={project} 
                                     onDelete={handleDelete}

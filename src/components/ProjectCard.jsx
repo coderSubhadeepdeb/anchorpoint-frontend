@@ -2,7 +2,7 @@ const ProjectCard = ({ project, onDelete }) => {
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
             
-        <div className="h-48 overflow-hidden">
+        <div className="h-30 overflow-hidden">
             {project.images?.length > 0 ? (
                 <img
                 src={project.images[0]}
@@ -16,20 +16,20 @@ const ProjectCard = ({ project, onDelete }) => {
             )}
         </div>
 
-        <div className="p-4">
-            <div className="flex justify-between items-start mb-2">
-                <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+        <div className="p-3">
+            <div className="flex justify-between items-start mb-1">
+                <h3 className="font-semibold text-md truncate">{project.title}</h3>
                 <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                     {project.category}
                 </span>
             </div>
 
-            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+            <p className="text-gray-600 text-xs mb-3 line-clamp-2">
                 {project.description}
             </p>
 
             <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">
+                <span className="text-xs text-gray-500">
                     {project.images?.length || 0} images
                 </span>
                 <button
@@ -39,7 +39,7 @@ const ProjectCard = ({ project, onDelete }) => {
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="h-4 w-4"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                     >
