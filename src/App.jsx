@@ -10,7 +10,9 @@ function App() {
         <>
             <Routes>
                 
-                <Route path="/" element={<Navigate to="/adminpanel" replace />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/projects" element={<Navigate to="/login" replace />} />
+                <Route path="/teams" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/adminpanel" 
                     element={

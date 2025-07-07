@@ -60,7 +60,7 @@ const Admin = () => {
     };
 
     return(
-    <>
+    <> 
         <div className="w-full p-4 space-y-6">
             <div className="w-full min-h-[200px] rounded-xl shadow-md p-6 flex items-center justify-center flex-col mx-auto max-w-7xl border-1 border-gray-300 gap-3">
                 <div className="text-4xl font-bold text-gray-500"> Welcome back to the Admin Panel</div>
