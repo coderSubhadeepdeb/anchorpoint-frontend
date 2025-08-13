@@ -15,7 +15,7 @@ const ContactUs = ({ onClose }) => {
 
   const onSubmit = async (data) => {
     const name = `${data.firstName} ${data.lastName}`.trim();
-    const message = `Name: ${name}\nEmail: ${data.email}\nMessage: ${data.message}`;
+    const message = `${data.message}`;
 
     try {
       const response = await axios.post(API_URL, {
