@@ -44,7 +44,7 @@ const Carousel = () => {
     }, [currentIndex]);
 
   return (
-    <div className="relative w-100% mx-auto  overflow-hidden pt-16">
+    <div className="relative w-full mx-auto  overflow-hidden pt-16 ">
     
       <button
         onClick={previous}

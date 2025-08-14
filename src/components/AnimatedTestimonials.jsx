@@ -34,7 +34,7 @@ export const AnimatedTestimonials = ({
 
   return (
     <motion.div
-      className="max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12"
+      className="max-w-sm mx-auto px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}

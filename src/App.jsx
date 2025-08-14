@@ -6,6 +6,8 @@ import Home from './pages/Home'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import OurTeam from './pages/OurTeam'
+import Projects from './pages/Projects'
 
 function App() {
     
@@ -15,8 +17,8 @@ function App() {
             <Routes>
                 
                 <Route path="/" element={<Home />} />
-                <Route path="/projects" element={<Navigate to="/login" replace />} />
-                <Route path="/teams" element={<Navigate to="/login" replace />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/teams" element={<OurTeam/>} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/adminpanel" 
                     element={

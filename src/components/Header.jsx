@@ -74,7 +74,7 @@ const Header = () => {
                             <Link className="block text-gray-700 hover:text-gray-900" to="/" onClick={() => setMobileMenuOpen(false)}>
                                 Home
                             </Link>
-                            <Link className="block text-gray-700 hover:text-gray-900" to="/finalgallery" onClick={() => setMobileMenuOpen(false)}>
+                            <Link className="block text-gray-700 hover:text-gray-900" to="/projects" onClick={() => setMobileMenuOpen(false)}>
                                 Projects
                             </Link>
                             <Link className="block text-gray-700 hover:text-gray-900" to="/teams" onClick={() => setMobileMenuOpen(false)}>
