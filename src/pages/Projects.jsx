@@ -1,15 +1,14 @@
-import React from 'react'
-import ProjectTopPart from '../components/ProjectTopPart'
-import ProjectMain from '../components/ProjectMain'
+import React from 'react';
+import Projecthead from '../components/Projecthead';
+import ProjectPageMain from '../components/ProjectPageMain';
 
 const Projects = () => {
   return (
-    <div className="flex flex-col">
-        <ProjectTopPart/>
-        <ProjectMain/>
-      
+    <div>
+        <Projecthead/>
+        <ProjectPageMain/>
     </div>
   )
 }
 
-export default Projects
+export default Projects;

@@ -1,7 +1,7 @@
 import React from 'react';
 import image from '../images/Headproj.jpg';
 
-const ProjectTopPart = () => {
+const Projecthead = () => {
   return (
     <div
             className="relative overflow-hidden rounded-lg bg-cover bg-no-repeat py-12 text-center"
@@ -22,4 +22,4 @@ const ProjectTopPart = () => {
   )
 }
 
-export default ProjectTopPart
+export default Projecthead
