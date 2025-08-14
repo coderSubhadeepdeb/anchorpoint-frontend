@@ -1,8 +1,9 @@
-"use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Masonry from "react-masonry-css";
+import { useNavigate } from "react-router-dom";
 
 export default function MasonryImageGallery() {
+  const router = useNavigate();
   const [galleryState, setGalleryState] = useState({
     opened: false,
     activeUrl: null,
@@ -25,18 +26,18 @@ export default function MasonryImageGallery() {
   ];
 
   const images = [
-    { src: "https://images.pexels.com/photos/2356059/pexels-photo-2356059.jpeg", aspect: "5/6", section: 'residential' },
-    { src: "https://images.pexels.com/photos/3618162/pexels-photo-3618162.jpeg", aspect: "3/4", section: 'residential' },
-    { src: "https://images.unsplash.com/photo-1689217634234-38efb49cb664", aspect: "4/5", section: 'commercial' },
-    { src: "https://images.unsplash.com/photo-1520350094754-f0fdcac35c1c", aspect: "16/9", section: 'architectural' },
-    { src: "https://cdn.devdojo.com/images/june2023/mountains-10.jpeg", aspect: "3/2", section: 'other' },
-    { src: "https://cdn.devdojo.com/images/june2023/mountains-06.jpeg", aspect: "4/3", section: 'other' },
-    { src: "https://images.pexels.com/photos/1891234/pexels-photo-1891234.jpeg", aspect: "2/3", section: 'residential' },
-    { src: "https://images.unsplash.com/photo-1529655683826-aba9b3e77383", aspect: "5/7", section: 'commercial' },
-    { src: "https://images.pexels.com/photos/4256852/pexels-photo-4256852.jpeg", aspect: "3/5", section: 'architectural' },
-    { src: "https://images.unsplash.com/photo-1541795083-1b160cf4f3d7", aspect: "4/7", section: 'other' },
-    { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb", aspect: "5/8", section: 'residential' },
-    { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05", aspect: "8/5", section: 'architectural' }
+    { src: "https://images.pexels.com/photos/2356059/pexels-photo-2356059.jpeg", aspect: "5/6", section: 'residential', name: 'Modern Villa' },
+    { src: "https://images.pexels.com/photos/3618162/pexels-photo-3618162.jpeg", aspect: "3/4", section: 'residential', name: 'Luxury Apartment' },
+    { src: "https://images.unsplash.com/photo-1689217634234-38efb49cb664", aspect: "4/5", section: 'commercial', name: 'Office Complex' },
+    { src: "https://images.unsplash.com/photo-1520350094754-f0fdcac35c1c", aspect: "16/9", section: 'architectural', name: 'Cityscape' },
+    { src: "https://cdn.devdojo.com/images/june2023/mountains-10.jpeg", aspect: "3/2", section: 'other', name: 'Mountain Retreat' },
+    { src: "https://cdn.devdojo.com/images/june2023/mountains-06.jpeg", aspect: "4/3", section: 'other', name: 'Sunset View' },
+    { src: "https://images.pexels.com/photos/1891234/pexels-photo-1891234.jpeg", aspect: "2/3", section: 'residential', name: 'Country House' },
+    { src: "https://images.unsplash.com/photo-1529655683826-aba9b3e77383", aspect: "5/7", section: 'commercial', name: 'Shopping Mall' },
+    { src: "https://images.pexels.com/photos/4256852/pexels-photo-4256852.jpeg", aspect: "3/5", section: 'architectural', name: 'Urban Design' },
+    { src: "https://images.unsplash.com/photo-1541795083-1b160cf4f3d7", aspect: "4/7", section: 'other', name: 'Forest Cabin' },
+    { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb", aspect: "5/8", section: 'residential', name: 'Lake House' },
+    { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05", aspect: "8/5", section: 'architectural', name: 'Mountain Resort' }
   ];
 
   const filteredImages = useCallback(() => {
@@ -109,6 +110,15 @@ export default function MasonryImageGallery() {
     }));
   }, [galleryState.imageIndex, filteredImages]);
 
+  const handleViewAll = useCallback(() => {
+    const state = {
+      currentSection: galleryState.currentSection,
+      currentIndex: galleryState.imageIndex
+    };
+    sessionStorage.setItem('galleryState', JSON.stringify(state));
+    router('/images');
+  }, [galleryState.currentSection, galleryState.imageIndex, router]);
+
   const changeSection = useCallback((sectionId) => {
     if (isTransitioning || sectionId === galleryState.currentSection) return;
 
@@ -122,7 +132,7 @@ export default function MasonryImageGallery() {
     }));
 
     const timer = setTimeout(() => setIsTransitioning(false), 300);
-    return () => clearTimeout(timer); // Not used, but safe if refactored into useEffect
+    return () => clearTimeout(timer);
   }, [isTransitioning, galleryState.currentSection]);
 
   const breakpointColumnsObj = { default: 4, 1100: 3, 700: 2, 500: 1 };
@@ -166,7 +176,7 @@ export default function MasonryImageGallery() {
         {filteredImages().map((img, index) => (
           <div 
             key={index}
-            className="mb-4 transition-all duration-500"
+            className="mb-4 transition-all duration-500 relative group"
             style={{ 
               aspectRatio: img.aspect,
               opacity: 0,
@@ -183,6 +193,9 @@ export default function MasonryImageGallery() {
               role="button"
               tabIndex={0}
             />
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <h3 className="text-white font-medium text-sm">{img.name}</h3>
+            </div>
           </div>
         ))}
       </Masonry>
@@ -206,13 +219,20 @@ export default function MasonryImageGallery() {
               </svg>
             </button>
 
-            <img
-              className="object-contain object-center w-full h-full select-none cursor-zoom-out"
-              src={galleryState.activeUrl}
-              alt="Expanded view"
-              style={{ animation: 'zoomIn 0.3s ease-in-out' }}
-            />
-
+            <div className="relative w-full h-full">
+              <img
+                className="object-contain object-center w-full h-full select-none cursor-zoom-out"
+                src={galleryState.activeUrl}
+                alt="Expanded view"
+                style={{ animation: 'zoomIn 0.3s ease-in-out' }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-center bg-gradient-to-t from-black/80 to-transparent">
+                <h3 className="text-white font-medium text-lg">
+                  {filteredImages()[galleryState.imageIndex]?.name}
+                </h3>
+              </div>
+            </div>
+            
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -222,6 +242,19 @@ export default function MasonryImageGallery() {
             >
               <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleViewAll();
+              }}
+              className="absolute top-4 right-4 flex items-center justify-center gap-2 text-white rounded-lg cursor-pointer bg-white/10 px-4 py-2 hover:bg-white/20 z-50"
+            >
+              <span className="text-sm">View Project</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </button>
 

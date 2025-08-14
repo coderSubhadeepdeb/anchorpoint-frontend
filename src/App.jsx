@@ -7,6 +7,9 @@ import FinalGallery from "./Pages/FinalGallery";
 import TeamPage from "./Pages/Teams";
 import Footer from "./Components/Footer";
 
+
+import ProjectGalleryPage from "./Pages/ProjectImage";
+
 function App() {
     return (
 
@@ -18,6 +21,7 @@ function App() {
               
                 <Route path="/projects" element={<FinalGallery />} />
                 <Route path="/teams" element={<TeamPage />} />
+                <Route path="/images" element={<ProjectGalleryPage />} />
             </Routes>
             <Footer/>
         </div>
