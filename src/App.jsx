@@ -8,7 +8,8 @@ import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import OurTeam from './pages/OurTeam'
 import Projects from './pages/Projects'
-import ProjectView from './pages/ProjectView'
+
+import ProjectGalleryPage from './pages/ProjectImage'
 
 function App() {
     
@@ -21,7 +22,7 @@ function App() {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/teams" element={<OurTeam/>} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/images" element={<ProjectView />} />
+                <Route path="/images" element={<ProjectGalleryPage />} />
                 <Route path="/adminpanel" 
                     element={
                         <ProtectedRoute>
