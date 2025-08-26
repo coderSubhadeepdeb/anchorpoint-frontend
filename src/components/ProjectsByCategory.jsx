@@ -5,12 +5,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import ProjectCard from './ProjectCard';
 
 const api = axios.create({
-    baseURL: 'https://anchorpoint-api.onrender.com',  // Replace with your backend URL
-    withCredentials: true // Automatically sends cookies
+    baseURL: 'https://anchorpoint-api.onrender.com',  
+    withCredentials: true 
 });
 
 const ProjectsByCategory = ({ category }) => {
-
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,17 +20,18 @@ const ProjectsByCategory = ({ category }) => {
                 setLoading(true);
                 const response = await api.get(`/api/v1/projects/category/${category}`);
                 
+                // Updated to match backend response structure
                 if (response.data.success) {
-                    setProjects(response.data.data);
+                    setProjects(response.data.data || []);
                 } else {
                     setProjects([]);
-                    toast.warning(`No projects found in ${category} category`);
+                    toast.warning(response.data.message || `No projects found in ${category} category`);
                 }
             } catch (err) {
                 console.error('Error fetching projects:', err);
-                setError(err.message);
+                setError(err.response?.data?.message || err.message);
                 setProjects([]);
-                toast.error(`Failed to load ${category} projects`);
+                toast.error(`Failed to load ${category} projects: ${err.response?.data?.message || err.message}`);
             } finally {
                 setLoading(false);
             }
@@ -55,14 +55,14 @@ const ProjectsByCategory = ({ category }) => {
                     prevProjects.filter(project => project._id !== projectId)
                 );
                 toast.update(toastId, {
-                    render: `"${projectToDelete.title}" deleted successfully`,
+                    render: response.data.message || `"${projectToDelete.title}" deleted successfully`,
                     type: 'success',
                     isLoading: false,
                     autoClose: 3000
                 });
             } else {
                 toast.update(toastId, {
-                    render: `Failed to delete "${projectToDelete.title}"`,
+                    render: response.data.message || `Failed to delete "${projectToDelete.title}"`,
                     type: 'error',
                     isLoading: false,
                     autoClose: 3000
@@ -71,19 +71,19 @@ const ProjectsByCategory = ({ category }) => {
         } catch (err) {
             console.error('Error deleting project:', err);
             const projectToDelete = projects.find(p => p._id === projectId);
-            toast.update(projectId, {
-                render: `Error deleting "${projectToDelete?.title || 'project'}"`,
+            toast.update(toastId, {
+                render: err.response?.data?.message || `Error deleting "${projectToDelete?.title || 'project'}"`,
                 type: 'error',
+                isLoading: false,
                 autoClose: 3000
             });
         }
     };
 
-    // Don't render the component if there are no projects
+    // Don't render if no projects and not loading
     if (!loading && projects.length === 0) {
         return null;
     }
-
 
     if (loading) {
         return (
@@ -108,17 +108,19 @@ const ProjectsByCategory = ({ category }) => {
     }
 
     return (
-        <div className=" p-3 rounded-lg mb-3 border-1 border-stone-300">
+        <div className="p-3 rounded-lg mb-3 border-1 border-stone-300">
             <h3 className="text-lg font-semibold mb-1 capitalize">{category}</h3>
             
             <div className="relative">
                 <div className="overflow-x-auto pb-4">
-                    <div className="flex space-x-4 w-max ">
+                    <div className="flex space-x-4 w-max">
                         {projects.map((project) => (
                             <div key={project._id} className="w-50 flex-shrink-0">
+                           
                                 <ProjectCard 
-                                    project={project} 
+                                    project={project || {}} 
                                     onDelete={handleDelete}
+                                    showDelete={true}
                                 />
                             </div>
                         ))}
@@ -130,4 +132,3 @@ const ProjectsByCategory = ({ category }) => {
 };
 
 export default ProjectsByCategory;
-

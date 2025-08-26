@@ -21,6 +21,7 @@ const ProjectPageMain = () => {
     const [activeTabIndicator, setActiveTabIndicator] = useState({ width: 0, left: 0 });
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // New loading state
 
     const tabsRef = useRef([]);
     const galleryRef = useRef(null);
@@ -34,6 +35,7 @@ const ProjectPageMain = () => {
     ];
 
     const [images, setImages] = useState([]);
+    const [projects, setProjects] = useState([]);
 
     // Check if device is mobile
     useEffect(() => {
@@ -49,37 +51,39 @@ const ProjectPageMain = () => {
     useEffect(() => {
         async function fetchProject() {
             try {
+                setIsLoading(true); // Start loading
                 const response = await api.get('/api/v1/projects');
                 const result = response.data;
 
                 if (result.success && result.data) {
-                    let transformedImages = [];
+                    let projectsData = [];
 
                     if (Array.isArray(result.data)) {
                         // Case: multiple projects
-                        transformedImages = result.data.flatMap(project =>
-                            (project.images || []).map(imageUrl => ({
-                                src: imageUrl,
-                                aspect: "4/3",
-                                section: project.category,
-                                name: project.title
-                            }))
-                        );
+                        projectsData = result.data;
                     } else {
                         // Case: single project
-                        const project = result.data;
-                        transformedImages = (project.images || []).map(imageUrl => ({
-                            src: imageUrl,
+                        projectsData = [result.data];
+                    }
+
+                    setProjects(projectsData);
+                  
+                    const transformedImages = projectsData
+                        .filter(project => project.images && project.images.length > 0)
+                        .map(project => ({
+                            src: project.images[0].src, 
                             aspect: "4/3",
                             section: project.category,
-                            name: project.title
+                            name: project.title,
+                            projectId: project._id || project.id 
                         }));
-                    }
 
                     setImages(transformedImages);
                 }
             } catch (error) {
                 console.error('Error fetching project:', error);
+            } finally {
+                setIsLoading(false); // Stop loading regardless of success/error
             }
         }
 
@@ -92,7 +96,6 @@ const ProjectPageMain = () => {
             : images.filter(img => img.section === galleryState.currentSection);
     }, [galleryState.currentSection, images]);
 
-    // Touch swipe handlers for mobile gallery navigation
     const touchStartX = useRef(0);
     const touchEndX = useRef(0);
 
@@ -112,10 +115,10 @@ const ProjectPageMain = () => {
         
         if (Math.abs(diff) > swipeThreshold) {
             if (diff > 0) {
-                // Swipe left - go to next
+               
                 handleNext();
             } else {
-                // Swipe right - go to previous
+    
                 handlePrev();
             }
         }
@@ -185,14 +188,9 @@ const ProjectPageMain = () => {
         }));
     }, [galleryState.imageIndex, filteredImages]);
 
-    const handleViewAll = useCallback(() => {
-        const state = {
-            currentSection: galleryState.currentSection,
-            currentIndex: galleryState.imageIndex
-        };
-        sessionStorage.setItem('galleryState', JSON.stringify(state));
-        router('/images');
-    }, [galleryState.currentSection, galleryState.imageIndex, router]);
+    const handleViewProject = useCallback((projectId) => {
+        router(`/images/${projectId}`);
+    }, [router]);
 
     const changeSection = useCallback((sectionId) => {
         if (isTransitioning || sectionId === galleryState.currentSection) return;
@@ -210,7 +208,7 @@ const ProjectPageMain = () => {
         return () => clearTimeout(timer);
     }, [isTransitioning, galleryState.currentSection]);
 
-    // Responsive breakpoints for masonry layout
+    
     const breakpointColumnsObj = { 
         default: 4, 
         1280: 3, 
@@ -220,9 +218,25 @@ const ProjectPageMain = () => {
         500: 1 
     };
 
+    // Generate skeleton loaders based on screen size
+    const generateSkeletons = () => {
+        const count = isMobile ? 6 : 12;
+        return Array.from({ length: count }).map((_, index) => (
+            <div 
+                key={index}
+                className="mb-3 sm:mb-4 relative"
+                style={{ aspectRatio: "4/3" }}
+            >
+                <div className="w-full h-full rounded-lg bg-gray-200 overflow-hidden relative">
+                    <div className="shimmer"></div>
+                </div>
+            </div>
+        ));
+    };
+
     return (
         <div className="w-full h-full select-none p-4 sm:p-6">
-            {/* Mobile filter dropdown for small screens */}
+            
             {isMobile && (
                 <div className="mb-6 md:hidden">
                     <select 
@@ -239,7 +253,7 @@ const ProjectPageMain = () => {
                 </div>
             )}
 
-            {/* Desktop tab navigation */}
+           
             {!isMobile && (
                 <div className="relative flex justify-center mb-8 border-b border-gray-200">
                     <div className="flex space-x-4 md:space-x-8">
@@ -275,34 +289,41 @@ const ProjectPageMain = () => {
                 className="flex w-auto -ml-2 sm:-ml-4"
                 columnClassName="pl-2 sm:pl-4 bg-clip-padding"
             >
-                {filteredImages().map((img, index) => (
-                    <div 
-                        key={index}
-                        className="mb-3 sm:mb-4 transition-all duration-500 relative group"
-                        style={{ 
-                            aspectRatio: img.aspect,
-                            opacity: 0,
-                            transform: 'translateY(20px)',
-                            animation: `fadeInUp 0.5s ease-out ${index * 0.05}s forwards`
-                        }}
-                    >
-                        <img
-                            src={img.src}
-                            loading="lazy"
-                            onClick={(e) => handleOpen(e, index)}
-                            alt={`Gallery image ${index + 1}`}
-                            className="object-cover w-full h-full rounded-lg cursor-zoom-in bg-gray-200 transition-transform duration-300 hover:scale-105"
-                            role="button"
-                            tabIndex={0}
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <h3 className="text-white font-medium text-xs sm:text-sm">{img.name}</h3>
+                {isLoading ? (
+                    // Show skeleton loaders while loading
+                    generateSkeletons()
+                ) : (
+                    // Show actual images when loaded
+                    filteredImages().map((img, index) => (
+                        <div 
+                            key={index}
+                            className="mb-3 sm:mb-4 transition-all duration-500 relative group"
+                            style={{ 
+                                aspectRatio: img.aspect,
+                                opacity: 0,
+                                transform: 'translateY(20px)',
+                                animation: `fadeInUp 0.5s ease-out ${index * 0.05}s forwards`
+                            }}
+                        >
+                            <img
+                                src={img.src}
+                                loading="lazy"
+                                onClick={(e) => handleOpen(e, index)}
+                                alt={`Gallery image ${index + 1}`}
+                                className="object-cover w-full h-full rounded-lg cursor-zoom-in bg-gray-200 transition-transform duration-300 hover:scale-105"
+                                role="button"
+                                tabIndex={0}
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <h3 className="text-white font-medium text-xs sm:text-sm">{img.name}</h3>
+                           
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </Masonry>
 
-            {filteredImages().length === 0 && !isTransitioning && (
+            {!isLoading && filteredImages().length === 0 && !isTransitioning && (
                 <div className="flex flex-col items-center justify-center py-16 text-gray-500">
                     <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -363,7 +384,9 @@ const ProjectPageMain = () => {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleViewAll();
+                                if (filteredImages()[galleryState.imageIndex]?.projectId) {
+                                    handleViewProject(filteredImages()[galleryState.imageIndex].projectId);
+                                }
                             }}
                             className="absolute top-4 right-4 flex items-center justify-center gap-2 text-white rounded-lg cursor-pointer bg-white/10 px-3 py-2 sm:px-4 sm:py-2 hover:bg-white/20 z-50"
                         >
@@ -405,6 +428,29 @@ const ProjectPageMain = () => {
                     to { opacity: 1; transform: translateY(0); }
                 }
                 
+                /* Shimmer effect for skeleton loading */
+                .shimmer {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    transform: translateX(-100%);
+                    background: linear-gradient(
+                        90deg,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 0.4) 50%,
+                        rgba(255, 255, 255, 0) 100%
+                    );
+                    animation: shimmer 1.5s infinite;
+                }
+                
+                @keyframes shimmer {
+                    100% {
+                        transform: translateX(100%);
+                    }
+                }
+                
                 /* Prevent horizontal scroll on mobile */
                 @media (max-width: 640px) {
                     .masonry-grid {
@@ -420,4 +466,4 @@ const ProjectPageMain = () => {
     )
 }
 
-export default ProjectPageMain
+export default ProjectPageMain;
