@@ -13,19 +13,19 @@ const Home = () => {
 
     const slides = [
     {
-      src: Img1,
+      src:"https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756070478/IMG_20250708_112449_inj0tk.jpg",
       title: "Boho Luxe",
       status: "Ongoing",
       button: "See More",
     },
     {
-      src: Img2,
+      src: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756070414/IMG_20250708_112532_gozqk6.jpg",
       title: "Eager Beavers",
       status: "Ongoing",
       button: "See More",
     },
     {
-      src: Img3,
+      src: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756070526/IMG_20250708_112058_abjwt1.jpg",
       title: "The Earth Haven",
       status: "Completed",
       button: "See More",
