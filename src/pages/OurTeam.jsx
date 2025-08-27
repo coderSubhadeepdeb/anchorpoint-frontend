@@ -67,7 +67,7 @@ const OurTeam = () => {
         },
         {
             name: "Somya Chheda",
-            role: "Architectural Designer",
+            role: "Architectural Planner",
             bio: "Somya's expertise in adaptive reuse transforms forgotten structures into vibrant community spaces. With dual degrees in Architecture and Urban Planning, she approaches each project considering both micro and macro environmental impacts. Her designs have revitalized 14 historic buildings across India.",
             expertise: ["Adaptive Reuse", "Urban Planning", "Community Engagement"],
             image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308061/Somya_Chheda_gskdhq.png"
