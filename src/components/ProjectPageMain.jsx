@@ -21,7 +21,7 @@ const ProjectPageMain = () => {
     const [activeTabIndicator, setActiveTabIndicator] = useState({ width: 0, left: 0 });
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // New loading state
+    const [isLoading, setIsLoading] = useState(true);
 
     const tabsRef = useRef([]);
     const galleryRef = useRef(null);
@@ -37,6 +37,17 @@ const ProjectPageMain = () => {
     const [images, setImages] = useState([]);
     const [projects, setProjects] = useState([]);
 
+    // Function to generate random aspect ratios
+    const getRandomAspectRatio = () => {
+        const ratios = [
+            "4/3", "3/4", "1/1", 
+            "16/9", "9/16", 
+            "2/3", "3/2",
+            "5/4", "4/5"
+        ];
+        return ratios[Math.floor(Math.random() * ratios.length)];
+    };
+
     // Check if device is mobile
     useEffect(() => {
         const checkIsMobile = () => {
@@ -51,7 +62,7 @@ const ProjectPageMain = () => {
     useEffect(() => {
         async function fetchProject() {
             try {
-                setIsLoading(true); // Start loading
+                setIsLoading(true);
                 const response = await api.get('/api/v1/projects');
                 const result = response.data;
 
@@ -59,10 +70,8 @@ const ProjectPageMain = () => {
                     let projectsData = [];
 
                     if (Array.isArray(result.data)) {
-                        // Case: multiple projects
                         projectsData = result.data;
                     } else {
-                        // Case: single project
                         projectsData = [result.data];
                     }
 
@@ -72,10 +81,12 @@ const ProjectPageMain = () => {
                         .filter(project => project.images && project.images.length > 0)
                         .map(project => ({
                             src: project.images[0].src, 
-                            aspect: "4/3",
+                            aspect: getRandomAspectRatio(), // Use random aspect ratio
                             section: project.category,
                             name: project.title,
-                            projectId: project._id || project.id 
+                            projectId: project._id || project.id,
+                            width: project.images[0].width || 400, // Add width if available
+                            height: project.images[0].height || 300 // Add height if available
                         }));
 
                     setImages(transformedImages);
@@ -83,7 +94,7 @@ const ProjectPageMain = () => {
             } catch (error) {
                 console.error('Error fetching project:', error);
             } finally {
-                setIsLoading(false); // Stop loading regardless of success/error
+                setIsLoading(false);
             }
         }
 
@@ -115,10 +126,8 @@ const ProjectPageMain = () => {
         
         if (Math.abs(diff) > swipeThreshold) {
             if (diff > 0) {
-               
                 handleNext();
             } else {
-    
                 handlePrev();
             }
         }
@@ -153,6 +162,12 @@ const ProjectPageMain = () => {
     }, [updateTabIndicator]);
 
     const handleOpen = useCallback((e, index) => {
+        // Hide navbar when opening the gallery
+        const navbar = document.querySelector("header, nav, .navbar");
+        if (navbar) {
+            navbar.style.display = "none";
+        }
+        
         setGalleryState(prev => ({
             ...prev,
             opened: true,
@@ -162,6 +177,12 @@ const ProjectPageMain = () => {
     }, [filteredImages]);
 
     const handleClose = useCallback(() => {
+        // Show navbar again when closing the gallery
+        const navbar = document.querySelector("header, nav, .navbar");
+        if (navbar) {
+            navbar.style.display = "";
+        }
+        
         setGalleryState(prev => ({ ...prev, opened: false }));
         setTimeout(() => {
             setGalleryState(prev => ({ ...prev, activeUrl: null, imageIndex: null }));
@@ -208,7 +229,7 @@ const ProjectPageMain = () => {
         return () => clearTimeout(timer);
     }, [isTransitioning, galleryState.currentSection]);
 
-    
+    // Masonry breakpoints
     const breakpointColumnsObj = { 
         default: 4, 
         1280: 3, 
@@ -218,20 +239,26 @@ const ProjectPageMain = () => {
         500: 1 
     };
 
-    // Generate skeleton loaders based on screen size
+    // Generate skeleton loaders with random aspect ratios
     const generateSkeletons = () => {
         const count = isMobile ? 6 : 12;
-        return Array.from({ length: count }).map((_, index) => (
-            <div 
-                key={index}
-                className="mb-3 sm:mb-4 relative"
-                style={{ aspectRatio: "4/3" }}
-            >
-                <div className="w-full h-full rounded-lg bg-gray-200 overflow-hidden relative">
-                    <div className="shimmer"></div>
+        const ratios = ["4/3", "3/4", "1/1", "16/9", "9/16", "2/3", "3/2"];
+        
+        return Array.from({ length: count }).map((_, index) => {
+            const randomRatio = ratios[Math.floor(Math.random() * ratios.length)];
+            
+            return (
+                <div 
+                    key={index}
+                    className="mb-3 sm:mb-4 relative"
+                    style={{ aspectRatio: randomRatio }}
+                >
+                    <div className="w-full h-full rounded-lg bg-gray-200 overflow-hidden relative">
+                        <div className="shimmer"></div>
+                    </div>
                 </div>
-            </div>
-        ));
+            );
+        });
     };
 
     return (
@@ -253,7 +280,6 @@ const ProjectPageMain = () => {
                 </div>
             )}
 
-           
             {!isMobile && (
                 <div className="relative flex justify-center mb-8 border-b border-gray-200">
                     <div className="flex space-x-4 md:space-x-8">
@@ -290,10 +316,8 @@ const ProjectPageMain = () => {
                 columnClassName="pl-2 sm:pl-4 bg-clip-padding"
             >
                 {isLoading ? (
-                    // Show skeleton loaders while loading
                     generateSkeletons()
                 ) : (
-                    // Show actual images when loaded
                     filteredImages().map((img, index) => (
                         <div 
                             key={index}
@@ -316,7 +340,17 @@ const ProjectPageMain = () => {
                             />
                             <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <h3 className="text-white font-medium text-xs sm:text-sm">{img.name}</h3>
-                           
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (img.projectId) {
+                                            handleViewProject(img.projectId);
+                                        }
+                                    }}
+                                    className="mt-2 bg-white text-black text-xs py-1 px-2 rounded hover:bg-gray-100 transition-colors"
+                                >
+                                    View Project
+                                </button>
                             </div>
                         </div>
                     ))
@@ -336,7 +370,7 @@ const ProjectPageMain = () => {
             {galleryState.opened && (
                 <div
                     onClick={handleClose}
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 select-none cursor-zoom-out"
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md select-none cursor-zoom-out"
                     style={{ animation: 'fadeIn 0.3s ease-in-out' }}
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
@@ -348,9 +382,9 @@ const ProjectPageMain = () => {
                                 e.stopPropagation();
                                 handlePrev();
                             }}
-                            className="absolute left-2 sm:left-4 flex items-center justify-center text-white rounded-full cursor-pointer bg-white/10 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 hover:bg-white/20 z-50"
+                            className="absolute left-2 sm:left-4 flex items-center justify-center text-white rounded-full cursor-pointer bg-white/10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 hover:bg-white/20 z-50 backdrop-blur-sm"
                         >
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                            <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                             </svg>
                         </button>
@@ -363,9 +397,23 @@ const ProjectPageMain = () => {
                                 style={{ animation: 'zoomIn 0.3s ease-in-out' }}
                             />
                             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-center bg-gradient-to-t from-black/80 to-transparent">
-                                <h3 className="text-white font-medium text-base sm:text-lg">
+                                <h3 className="text-white font-medium text-base sm:text-lg mb-2">
                                     {filteredImages()[galleryState.imageIndex]?.name}
                                 </h3>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (filteredImages()[galleryState.imageIndex]?.projectId) {
+                                            handleViewProject(filteredImages()[galleryState.imageIndex].projectId);
+                                        }
+                                    }}
+                                    className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 mx-auto"
+                                >
+                                    <span>View Full Project</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         
@@ -374,39 +422,24 @@ const ProjectPageMain = () => {
                                 e.stopPropagation();
                                 handleNext();
                             }}
-                            className="absolute right-2 sm:right-4 flex items-center justify-center text-white rounded-full cursor-pointer bg-white/10 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 hover:bg-white/20 z-50"
+                            className="absolute right-2 sm:right-4 flex items-center justify-center text-white rounded-full cursor-pointer bg-white/10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 hover:bg-white/20 z-50 backdrop-blur-sm"
                         >
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                            <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         </button>
 
                         <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (filteredImages()[galleryState.imageIndex]?.projectId) {
-                                    handleViewProject(filteredImages()[galleryState.imageIndex].projectId);
-                                }
-                            }}
-                            className="absolute top-4 right-4 flex items-center justify-center gap-2 text-white rounded-lg cursor-pointer bg-white/10 px-3 py-2 sm:px-4 sm:py-2 hover:bg-white/20 z-50"
-                        >
-                            <span className="text-xs sm:text-sm">View Project</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </button>
-
-                        <button
                             onClick={handleClose}
-                            className="absolute top-4 left-4 flex items-center justify-center text-white rounded-full cursor-pointer bg-white/10 w-8 h-8 sm:w-10 sm:h-10 hover:bg-white/20 z-50"
+                            className="absolute top-4 right-4 flex items-center justify-center text-white rounded-full cursor-pointer bg-white/10 w-10 h-10 sm:w-12 sm:h-12 hover:bg-white/20 z-50 backdrop-blur-sm"
                         >
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                            <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
 
                         <div className="absolute bottom-4 left-0 right-0 flex justify-center z-50">
-                            <div className="bg-black/50 text-white px-3 py-1 rounded-full text-xs sm:text-sm">
+                            <div className="bg-black/50 text-white px-3 py-1 rounded-full text-xs sm:text-sm backdrop-blur-sm">
                                 {galleryState.imageIndex + 1} / {filteredImages().length}
                             </div>
                         </div>
@@ -428,7 +461,6 @@ const ProjectPageMain = () => {
                     to { opacity: 1; transform: translateY(0); }
                 }
                 
-                /* Shimmer effect for skeleton loading */
                 .shimmer {
                     position: absolute;
                     top: 0;
@@ -451,7 +483,6 @@ const ProjectPageMain = () => {
                     }
                 }
                 
-                /* Prevent horizontal scroll on mobile */
                 @media (max-width: 640px) {
                     .masonry-grid {
                         margin-left: 0;

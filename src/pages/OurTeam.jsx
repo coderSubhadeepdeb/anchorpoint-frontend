@@ -42,37 +42,46 @@ const OurTeam = () => {
             role: "Chief Architect",
             bio: "With 12 years of experience in sustainable design, Harshitha leads our architectural vision. She holds a Master's in Architecture from ETH Zurich and has worked on award-winning projects across Europe and Asia. Her approach blends traditional techniques with innovative materials to create spaces that stand the test of time.",
             expertise: ["Sustainable Design", "Project Leadership", "Historical Preservation"],
-            image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+            image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308061/Harshitha_Raghava_nsdx7d.jpg"
         },
         {
-            name: "Harsita. Baruah",
-            role: "Architectural Designer",
-            bio: "Specializing in residential transformations, Harstr brings a meticulous eye for detail to every project. After studying at the Architectural Association in London, he developed a signature style that balances functionality with artistic expression. His work has been featured in 8 international design publications.",
+            name: "Harsita Baruah",
+            role: "Interior Designer",
+            bio: "Specializing in residential transformations, Harsita brings a meticulous eye for detail to every project. After studying at the Architectural Association in London, she developed a signature style that balances functionality with artistic expression. Her work has been featured in 8 international design publications.",
             expertise: ["Residential Design", "Space Planning", "Material Innovation"],
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+            image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308061/Harsita_Baruah_hr5jpc.png"
         },
         {
             name: "Amogh Mahimkar",
-            role: "Architectural Visualizer",
+            role: "3D Visualizer",
             bio: "Amogh's photorealistic renderings help clients envision spaces before construction begins. A graduate of SCI-Arc's digital design program, he combines technical precision with artistic flair. His visualization workflow incorporates VR technology for immersive client experiences.",
             expertise: ["3D Rendering", "VR Walkthroughs", "Lighting Simulation"],
-            image: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+            image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308063/Amogh_Mahimkar_ixyqa8.png"
         },
         {
             name: "Tejaswini Prakash Naik",
             role: "Architectural Designer",
             bio: "Tejaswini's expertise in adaptive reuse transforms forgotten structures into vibrant community spaces. With dual degrees in Architecture and Urban Planning, she approaches each project considering both micro and macro environmental impacts. Her designs have revitalized 14 historic buildings across India.",
             expertise: ["Adaptive Reuse", "Urban Planning", "Community Engagement"],
-            image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+            image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308060/Tejaswini_Naik_xag287.jpg"
+        },
+        {
+            name: "Somya Chheda",
+            role: "Architectural Designer",
+            bio: "Somya's expertise in adaptive reuse transforms forgotten structures into vibrant community spaces. With dual degrees in Architecture and Urban Planning, she approaches each project considering both micro and macro environmental impacts. Her designs have revitalized 14 historic buildings across India.",
+            expertise: ["Adaptive Reuse", "Urban Planning", "Community Engagement"],
+            image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308061/Somya_Chheda_gskdhq.png"
         }
     ];
 
+    // Split team members into two groups: first 3 and remaining 2
+    const firstRowMembers = teamMembers.slice(0, 3);
+    const secondRowMembers = teamMembers.slice(3);
+
     return (
         
-        <div className="min-h-screen bg-white relative overflow-hidden">
+        <div className="min-h-screen relative overflow-hidden">
             
-            
-    
             <div
                 className="relative overflow-hidden rounded-lg bg-cover bg-no-repeat py-12 text-center"
                 style={{ backgroundImage: `url('${Img1}')`, height: "400px" }}
@@ -109,7 +118,7 @@ const OurTeam = () => {
                 </div>
             </div>
 
-      
+            {/* Team Members Section */}
             <motion.div 
                 initial="hidden"
                 whileInView="visible"
@@ -121,15 +130,52 @@ const OurTeam = () => {
                     MEET OUR TEAM
                 </motion.h2>
 
-                <motion.div variants={containerVariants} className="grid grid-cols-1 gap-y-16 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
-                    {teamMembers.map((member) => (
+                {/* First Row - 3 Team Members */}
+                <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-24">
+                    {firstRowMembers.map((member) => (
                         <motion.div 
                             key={member.name} 
                             variants={itemVariants}
                             whileHover={{ y: -5 }}
-                            className="group relative flex flex-col items-center text-center"
+                            className="group relative flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-sm"
                         >
-                        
+                            <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:border-blue-200 transition-all duration-300 mb-6">
+                                <img
+                                    src={member.image}
+                                    alt={member.name}
+                                    className="h-full w-full object-cover object-center"
+                                />
+                            </div>
+                            <div className="mt-2 px-4">
+                                <h3 className="text-xl font-semibold text-gray-900">
+                                    {member.name}
+                                </h3>
+                                <p className="text-sm font-medium text-gray-500 mt-1">{member.role}</p>
+                                <p className="mt-4 text-base text-gray-600">{member.bio}</p>
+                                <div className="mt-4">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Expertise</h4>
+                                    <div className="mt-2 flex flex-wrap gap-2 justify-center">
+                                        {member.expertise.map((skill) => (
+                                            <span key={skill} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-500">
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </motion.div>
+
+                {/* Second Row - 2 Team Members */}
+                <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-5xl mx-auto">
+                    {secondRowMembers.map((member) => (
+                        <motion.div 
+                            key={member.name} 
+                            variants={itemVariants}
+                            whileHover={{ y: -5 }}
+                            className="group relative flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-sm"
+                        >
                             <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:border-blue-200 transition-all duration-300 mb-6">
                                 <img
                                     src={member.image}
@@ -159,13 +205,13 @@ const OurTeam = () => {
                 </motion.div>
             </motion.div>
 
-        
+            {/* Design Philosophy Section */}
             <motion.div 
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeInVariants}
-                className="relative bg-gray-50 py-24 sm:py-32"
+                className="relative py-24 sm:py-32"
             >
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute left-16 top-full -translate-y-1/2 transform-gpu opacity-50 blur-3xl">
