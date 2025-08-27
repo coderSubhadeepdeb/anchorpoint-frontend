@@ -7,7 +7,7 @@ import Img2 from "../images/Ongoing2.png";
 import Img3 from "../images/Completed1.png";
 import { Ongoing } from '../components/Ongoing';
 import TeamSection from '../components/Teams';
-import { AnimatedTestimonials } from '../components/AnimatedTestimonials';
+// import { AnimatedTestimonials } from '../components/AnimatedTestimonials';
 
 const Home = () => {
 
@@ -39,7 +39,7 @@ const Home = () => {
 
         <Carousel />
         <Byline />
-        <AnimatedTestimonials autoplay={true}
+        {/* <AnimatedTestimonials autoplay={true}
           testimonials={[
             {
               name: "Satya Nandella",
@@ -60,7 +60,7 @@ const Home = () => {
               src: "https://hips.hearstapps.com/hmg-prod/images/actor-johnny-depp-attends-the-jeanne-du-barry-photocall-at-news-photo-1685634329.jpg?crop=1.00xw:0.669xh;0,0.0477xh&resize=640:*",
             },
           ]}
-        />
+        /> */}
 
         <div className='w-100vw text-black flex justify-center'>
           <h1 className='text-xl md:text-3xl lg:text-5xl font-semibold mb-6 py-10'>Our Recent Projects</h1>

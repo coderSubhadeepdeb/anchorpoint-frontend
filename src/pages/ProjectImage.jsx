@@ -18,7 +18,6 @@ const ProjectGalleryPage = () => {
   const [project, setProject] = useState(null);
   const { projectId } = useParams();
 
-
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -34,7 +33,6 @@ const ProjectGalleryPage = () => {
     fetchProject();
   }, [projectId]); 
 
- 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -65,12 +63,21 @@ const ProjectGalleryPage = () => {
     }
   };
 
-
   useEffect(() => {
     if (isSliderOpen) {
       document.body.classList.add("overflow-hidden");
+      // Hide any navbar or header when slider is open
+      const navbar = document.querySelector("header, nav, .navbar");
+      if (navbar) {
+        navbar.style.display = "none";
+      }
     } else {
       document.body.classList.remove("overflow-hidden");
+      // Show navbar again when slider is closed
+      const navbar = document.querySelector("header, nav, .navbar");
+      if (navbar) {
+        navbar.style.display = "";
+      }
     }
   }, [isSliderOpen]);
 
@@ -96,7 +103,6 @@ const ProjectGalleryPage = () => {
     trackMouse: true,
   });
 
- 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isSliderOpen) return;
@@ -116,12 +122,13 @@ const ProjectGalleryPage = () => {
 
   if (!project) return <div className="text-center py-20">Loading...</div>;
 
- 
   const videoMedia = project.videoLink || null;
   const imageMedia = project.images || [];
+  const hasImages = imageMedia.length > 0;
+  const firstImage = hasImages ? imageMedia[0] : null;
 
   return (
-    <div className="relative min-h-screen bg-gray-50">
+    <div className="relative min-h-screen">
       {/* Hero Section */}
       <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden">
         {videoMedia ? (
@@ -134,8 +141,16 @@ const ProjectGalleryPage = () => {
             playsInline
             className="absolute top-0 left-0 w-full h-full object-cover"
           />
+        ) : hasImages ? (
+          <div className="absolute top-0 left-0 w-full h-full">
+            <img
+              src={firstImage.src}
+              alt={firstImage.title || project.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
         ) : (
-          
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900 to-purple-800 flex items-center justify-center">
             <div className="text-white text-center">
               <h1 className="text-4xl md:text-6xl font-bold mb-4">{project.title}</h1>
@@ -144,7 +159,7 @@ const ProjectGalleryPage = () => {
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10">
           <div className="container mx-auto px-6 text-center">
             <motion.h1
               initial={{ y: 20, opacity: 0 }}
@@ -165,11 +180,10 @@ const ProjectGalleryPage = () => {
           </div>
         </div>
 
-       
         {videoMedia && (
           <button
             onClick={toggleVideoPlayback}
-            className="absolute bottom-4 right-4 bg-black/50 text-white p-2 rounded-full"
+            className="absolute bottom-4 right-4 bg-black/50 text-white p-2 rounded-full z-10"
             aria-label={isVideoPlaying ? "Pause video" : "Play video"}
           >
             {isVideoPlaying ? (
@@ -195,7 +209,7 @@ const ProjectGalleryPage = () => {
 
       <section className="container mx-auto px-6 py-12">
         <h2 className="text-3xl font-bold mb-8 text-center">Project Gallery</h2>
-        {imageMedia.length > 0 ? (
+        {hasImages ? (
           <Masonry
             breakpointCols={breakpointCols}
             className="flex w-auto -ml-4"
@@ -220,7 +234,6 @@ const ProjectGalleryPage = () => {
                   <div>
                     <h3 className="text-white text-lg font-semibold">{img.title}</h3>
                     <p className="text-white text-sm">{img.description}</p>
-                    
                   </div>
                 </div>
               </motion.div>
@@ -233,20 +246,18 @@ const ProjectGalleryPage = () => {
         )}
       </section>
 
-   
+      {/* Full-screen slider */}
       <AnimatePresence>
-        {isSliderOpen && (     
-          <>
-            <motion.div
-              className="fixed inset-0 bg-black/90 z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={closeSlider}
-            />
-
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {isSliderOpen && hasImages && (     
+          <motion.div
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={closeSlider}
+          >
+            <div className="absolute inset-0 flex items-center justify-center p-4">
               <motion.div
                 className="relative w-full max-w-6xl max-h-[90vh]"
                 initial={{ scale: 0.95 }}
@@ -258,11 +269,11 @@ const ProjectGalleryPage = () => {
               >
                 <button
                   onClick={closeSlider}
-                  className="absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-sm transition"
+                  className="absolute -top-12 right-0 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-sm transition"
                   aria-label="Close gallery"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-8 h-8"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -279,7 +290,7 @@ const ProjectGalleryPage = () => {
                 <div className="relative w-full h-full overflow-y-auto">
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={imageMedia[currentIndex]._id} // Fixed: Changed id to _id
+                      key={imageMedia[currentIndex]._id}
                       initial={{ opacity: 0, x: 50 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -50 }}
@@ -298,7 +309,6 @@ const ProjectGalleryPage = () => {
                         <p className="text-gray-300 mt-2">
                           {imageMedia[currentIndex].description}
                         </p>
-                        {/* Removed tags since they don't exist in your API response */}
                       </div>
                     </motion.div>
                   </AnimatePresence>
@@ -313,7 +323,7 @@ const ProjectGalleryPage = () => {
                   aria-label="Previous image"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-8 h-8"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -335,7 +345,7 @@ const ProjectGalleryPage = () => {
                   aria-label="Next image"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-8 h-8"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -348,12 +358,12 @@ const ProjectGalleryPage = () => {
                     />
                   </svg>
                 </button>
-                <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm">
+                <div className="absolute -bottom-10 left-0 right-0 text-center text-white/70 text-sm">
                   {currentIndex + 1} / {imageMedia.length}
                 </div>
               </motion.div>
             </div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
