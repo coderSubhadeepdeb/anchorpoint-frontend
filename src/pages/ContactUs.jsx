@@ -107,7 +107,7 @@ const ContactUs = ({ onClose }) => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-900">Call Us</p>
-                    <p className="text-sm text-gray-700">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-700">+91 88226 88497, +91 89287 78270, +91 9321156209</p>
                   </div>
                 </div>
               </div>
