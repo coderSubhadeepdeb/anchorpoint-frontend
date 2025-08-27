@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 export default function TeamSection() {
   const teamMembers = [
     {
-      name: "Harshita Raghava",
+      name: "Harshitha Raghava",
       role: "Chief Architect",
       image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308061/Harshitha_Raghava_nsdx7d.jpg"
     },
@@ -24,7 +24,7 @@ export default function TeamSection() {
       image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308060/Tejaswini_Naik_xag287.jpg"
     },
     {
-      name: "Yasmine Tano",
+      name: "Somya Chheda",
       role: "Architectural Planner",
       image: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756308061/Somya_Chheda_gskdhq.png"
     }
