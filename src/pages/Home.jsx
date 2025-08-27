@@ -14,20 +14,20 @@ const Home = () => {
     const slides = [
     {
       src:"https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756070478/IMG_20250708_112449_inj0tk.jpg",
-      title: "Boho Luxe",
-      status: "Ongoing",
+      title: "MANÉ Salon ",
+      status: "Completed",
       button: "See More",
     },
     {
       src: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756070414/IMG_20250708_112532_gozqk6.jpg",
-      title: "Eager Beavers",
-      status: "Ongoing",
+      title: "1BHK in Shivaji Nagar",
+      status: "Completed",
       button: "See More",
     },
     {
       src: "https://res.cloudinary.com/dtvm7xvmo/image/upload/v1756070526/IMG_20250708_112058_abjwt1.jpg",
-      title: "The Earth Haven",
-      status: "Completed",
+      title: "2BHK in Cuffe Parade",
+      status: "Pitching",
       button: "See More",
     },
 
